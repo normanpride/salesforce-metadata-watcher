@@ -1,18 +1,25 @@
 {
-  "name": "asemio-tdd-example",
+  "name": "asemio-js-tdd-skeleton",
   "version": "1.0.0",
   "description": "",
+  "repository": "https://github.com/asemio/js-tdd-skeleton",
   "main": "index.js",
   "scripts": {
-    "test": "mocha tests.js --compilers js:babel-core/register",
-    "watch": "mocha tests.js --watch --compilers js:babel-core/register"
+    "test": "mocha lint.js tests.js --compilers js:babel-core/register",
+    "test:watch": "npm run test -- --watch"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "babel-core": "^6.25.0",
-    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-env": "^1.6.1",
     "chai": "^4.0.1",
-    "mocha": "^3.4.2"
+    "eslint": "^4.15.0",
+    "eslint-config-asemio": "github:asemio/eslint-config-asemio",
+    "mocha": "^3.4.2",
+    "mocha-eslint": "^4.1.0"
+  },
+  "babel": {
+    "presets": ["env"]
   }
 }
