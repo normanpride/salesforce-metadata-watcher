@@ -16,10 +16,12 @@
     "chai": "^4.0.1",
     "eslint": "^4.15.0",
     "eslint-config-asemio": "github:asemio/eslint-config-asemio",
-    "mocha": "^3.4.2",
+    "mocha": "^5.2.0",
     "mocha-eslint": "^4.1.0"
   },
   "babel": {
-    "presets": ["env"]
+    "presets": [
+      "env"
+    ]
   }
 }
