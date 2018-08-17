@@ -1,11 +1,11 @@
 {
-  "name": "asemio-js-tdd-skeleton",
+  "name": "salesforce-metadata-watcher",
   "version": "1.0.0",
   "description": "",
-  "repository": "https://github.com/asemio/js-tdd-skeleton",
+  "repository": "https://github.com/normanpride/salesforce-metadata-watcher",
   "main": "index.js",
   "scripts": {
-    "test": "mocha lint.js tests.js --compilers js:babel-core/register",
+    "test": "mocha tests/*.js --compilers js:babel-core/register",
     "test:watch": "npm run test -- --watch"
   },
   "author": "",
@@ -17,7 +17,8 @@
     "eslint": "^4.15.0",
     "eslint-config-asemio": "github:asemio/eslint-config-asemio",
     "mocha": "^5.2.0",
-    "mocha-eslint": "^4.1.0"
+    "mocha-eslint": "^4.1.0",
+    "sinon": "^6.1.5"
   },
   "babel": {
     "presets": [
