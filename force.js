@@ -10,12 +10,12 @@ const fileSuffixes = {
 function buildPushCommand(fileName) {
     const filePieceArray = fileName.split(".");
 
-    if (filePieceArray.length === 1) { return ""; }
+    if (filePieceArray.length === 1) { return []; }
 
     const fileSuffix = filePieceArray[filePieceArray.length - 1];
     const metadataType = fileSuffixes[fileSuffix];
 
-    if (!metadataType) { return ""; }
+    if (!metadataType) { return []; }
 
     var metadataItemName = "";
     if (fileSuffix === "js") {
@@ -31,20 +31,20 @@ function buildPushCommand(fileName) {
         metadataItemName = filePieceArray[0];
     }
 
-    return `force push -t ${metadataType} -n ${metadataItemName}`;
+    return ["push", "-t", metadataType, "-n", metadataItemName];
 }
 
 function buildTestCommand(fileName) {
     const filePieceArray = fileName.split(".");
 
-    if (filePieceArray.length === 1) { return ""; }
+    if (filePieceArray.length === 1) { return []; }
 
     const fileSuffix = filePieceArray[filePieceArray.length - 1];
     const metadataType = fileSuffixes[fileSuffix];
 
-    if (metadataType !== "ApexClass") { return ""; }
+    if (metadataType !== "ApexClass") { return []; }
 
-    return `force test ${filePieceArray[0]}`;
+    return ["test", filePieceArray[0]];
 }
 
 export { buildPushCommand, buildTestCommand };
