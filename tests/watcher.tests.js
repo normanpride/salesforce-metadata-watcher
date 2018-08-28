@@ -1,50 +1,119 @@
 import { expect } from "chai";
 import sinon from "sinon";
-import { watchSrc } from "../watcher";
+import { watchSrc, findTests, fileExists } from "../js/watcher";
 import * as fs from "fs";
 
-const fileName = "src/test.xml";
+const folders = ["classes", "triggers", "pages", "aura", "components"];
 
-describe("source directory watcher", () => {
-    beforeEach(() => {
-        fs.writeFileSync(fileName, "", () => {});
+folders.forEach((folder) => {
+    describe(`${folder} watcher`, () => {
+        let deepFile = `src/${folder}/test.xml`;
+    
+        beforeEach(() => {
+            fs.writeFileSync(deepFile, "");
+        });
+    
+        it("should call given function on file save", (done) => {        
+            var callback = sinon.fake();
+            
+            watchSrc(callback);
+    
+            fs.appendFile(deepFile, "test", () => {
+                expect(callback.called).to.be.true;
+                expect(callback.lastCall.lastArg).to.equal("test.xml");
+                expect(callback.calledOnce).to.be.true;
+                done();
+            });
+        });
+
+        it("should log the actions being taken", (done) => {
+            var callback = sinon.spy();
+            var logger = sinon.fake();
+    
+            watchSrc(callback, logger);
+    
+            fs.appendFile(deepFile, "test", () => {
+                expect(logger.lastCall.lastArg).to.equal("Detected a change in test.xml");
+                done();
+            });
+        });
+
+        it("should only log change actions", (done) => {
+            var callback = sinon.fake();
+            fs.writeFileSync(deepFile+".cls", "");
+
+            watchSrc(callback);
+
+            fs.unlink(deepFile+".cls",() => {
+                expect(callback.called).to.be.false;
+                done();
+            });
+        });
+    
+        afterEach((done) => {
+            fs.unlink(deepFile, () => { done(); });
+        });
+    });
+})
+
+describe("test finder", () => {
+    it("should find no tests", () => {
+        expect(findTests("test.xml")).to.equal("");
     });
 
-    it("should call given function on file save", () => {
-        var callback = sinon.spy();
+    it("should find testtest.cls", (done) => {
+        let lowerFileName = "src/classes/testtest.cls";
+
+        fs.writeFileSync(lowerFileName, "");
         
-        watchSrc(callback);        
-
-        fs.appendFile(fileName, "test", () => {
-            expect(callback.called).to.be.true;
-        });        
+        expect(findTests("test.xml")).to.equal("testtest.cls");
+        
+        fs.unlink(lowerFileName, () => { done(); });
     });
 
-    it("should call given function on file save in deeper folder", () => {
-        let deepFile = "src/classes/test.xml";
-        var callback = sinon.spy();
-        fs.writeFileSync(deepFile, "");
+    it("should find testTest.cls", (done) => {
+        let lowerFileName = "src/classes/testTest.cls";
 
-        watchSrc(callback);
-
-        fs.appendFile(deepFile, "test", () => {
-            expect(callback.called).to.be.true;
-        });
+        fs.writeFileSync(lowerFileName, "");
+        
+        expect(findTests("test.xml")).to.equal("testTest.cls");
+        
+        fs.unlink(lowerFileName, () => { done(); });
     });
 
-    it("should log the actions being taken", () => {
-        var callback = sinon.spy();
-        var logger = sinon.fake();
+    it("should find anything_tst_test.cls", (done) => {
+        let lowerFileName = "src/classes/anything_tst_test.cls";
 
-        watchSrc(callback, logger);
+        fs.writeFileSync(lowerFileName, "");
+        
+        expect(findTests("test.xml")).to.equal("anything_tst_test.cls");
+        
+        fs.unlink(lowerFileName, () => { done(); });
+    });
+});
 
-        fs.appendFile(fileName, "test", () => {
-            console.log(logger.lastCall.lastArg);
-            expect(logger.lastCall.lastArg).to.equal("Detected a change in test.xml");
-        });
+describe("file finder", () => {
+    it("should return false for no file", () => {
+        expect(fileExists("src/classes/test.xml")).to.be.false;
     });
 
-    afterEach(() => {
-        fs.unlink(fileName, () => {});
-    })
+    it("should return filename when found a file", (done) => {
+        let fileName = "src/classes/anything_tst_test.cls";
+
+        fs.writeFileSync(fileName, "");
+
+        expect(fileExists(fileName)).to.equal("anything_tst_test.cls");
+
+        fs.unlink(fileName, () => { done(); });
+    });
+
+    it("should return filename when found partial file", (done) => {
+        let fileName = "src/classes/anything_tst_test.cls";
+
+        fs.writeFileSync(fileName, "");
+
+        expect(fileExists("src/classes/_tst_test.cls")).to.equal("anything_tst_test.cls");
+
+        fs.unlink(fileName, () => { done(); });
+    });
 });

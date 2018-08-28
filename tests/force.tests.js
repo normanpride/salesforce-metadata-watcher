@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { buildPushCommand, buildTestCommand } from "../force";
+import { buildPushCommand, buildTestCommand } from "../js/force";
 
 describe("force cli push command builder", () => {
     const tests = [
